@@ -1,0 +1,60 @@
+<section class="page" *ngIf="!loading()">
+  <header class="header">
+    <div>
+      <h1 *ngIf="!isEdit()">Add application</h1>
+      <h1 *ngIf="isEdit()">Edit application</h1>
+      <p>Fill the job application details and key dates.</p>
+    </div>
+
+    <a class="secondary" routerLink="/applications">Back</a>
+  </header>
+
+  <p class="empty" *ngIf="notFound()">Application not found.</p>
+
+  <form class="form" *ngIf="!notFound()" [formGroup]="form" (ngSubmit)="save()">
+    <label>
+      <span>Company *</span>
+      <input type="text" [formControl]="form.controls.company" />
+      <small *ngIf="form.controls.company.touched && form.controls.company.invalid">Required</small>
+    </label>
+
+    <label>
+      <span>Position *</span>
+      <input type="text" [formControl]="form.controls.position" />
+      <small *ngIf="form.controls.position.touched && form.controls.position.invalid">Required</small>
+    </label>
+
+    <label>
+      <span>Status *</span>
+      <select [formControl]="form.controls.status">
+        <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+      </select>
+    </label>
+
+    <div class="grid">
+      <label>
+        <span>Applied date</span>
+        <input type="date" [formControl]="form.controls.appliedDate" />
+      </label>
+
+      <label>
+        <span>Interview date</span>
+        <input type="date" [formControl]="form.controls.interviewDate" />
+      </label>
+
+      <label>
+        <span>Deadline date</span>
+        <input type="date" [formControl]="form.controls.deadlineDate" />
+      </label>
+    </div>
+
+    <label>
+      <span>Notes</span>
+      <textarea rows="4" [formControl]="form.controls.notes"></textarea>
+    </label>
+
+    <footer class="actions">
+      <button class="primary" type="submit">Save</button>
+    </footer>
+  </form>
+</section>
