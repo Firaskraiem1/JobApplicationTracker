@@ -1,0 +1,59 @@
+<section class="page">
+  <header class="header">
+    <div>
+      <h1>Job Application Tracker</h1>
+      <p>Track and manage your job applications.</p>
+    </div>
+
+    <a class="primary" routerLink="/applications/new">+ Add application</a>
+  </header>
+
+  <ng-container *ngIf="applications$ | async as applications">
+    <p class="empty" *ngIf="applications.length === 0">
+      No applications yet. Add your first one.
+    </p>
+
+    <div class="list" *ngIf="applications.length > 0">
+      <article class="card" *ngFor="let app of applications; trackBy: trackById">
+        <div class="top">
+          <div class="title">
+            <div class="company">{{ app.company }}</div>
+            <div class="role">{{ app.position }}</div>
+          </div>
+          <div class="badges">
+            <span
+              *ngIf="upcomingIndicator(app) as ind"
+              class="indicator"
+              [attr.data-kind]="ind.kind"
+            >
+              {{ ind.label }}
+            </span>
+            <span class="status" [attr.data-status]="app.status">{{ app.status }}</span>
+          </div>
+        </div>
+
+        <dl class="meta">
+          <div>
+            <dt>Applied</dt>
+            <dd>{{ app.appliedDate || '—' }}</dd>
+          </div>
+          <div>
+            <dt>Interview</dt>
+            <dd>{{ app.interviewDate || '—' }}</dd>
+          </div>
+          <div>
+            <dt>Deadline</dt>
+            <dd>{{ app.deadlineDate || '—' }}</dd>
+          </div>
+        </dl>
+
+        <p class="notes" *ngIf="app.notes">{{ app.notes }}</p>
+
+        <footer class="actions">
+          <a class="secondary" [routerLink]="['/applications', app.id, 'edit']">Edit</a>
+          <button class="danger" type="button" (click)="delete(app.id)">Delete</button>
+        </footer>
+      </article>
+    </div>
+  </ng-container>
+</section>

@@ -1,0 +1,14 @@
+<div class="app">
+  <header class="topbar">
+    <div class="brand">{{ title }}</div>
+
+    <nav class="nav">
+      <a routerLink="/applications" routerLinkActive="active">Applications</a>
+      <a routerLink="/calendar" routerLinkActive="active">Calendar</a>
+    </nav>
+  </header>
+
+  <main class="content">
+    <router-outlet />
+  </main>
+</div>

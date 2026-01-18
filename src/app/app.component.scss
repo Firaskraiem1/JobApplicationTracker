@@ -1,0 +1,40 @@
+.app {
+	min-height: 100vh;
+	background: #f8fafc;
+}
+
+.topbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 14px 16px;
+	border-bottom: 1px solid #e2e8f0;
+	background: #fff;
+}
+
+.brand {
+	font-weight: 800;
+}
+
+.nav {
+	display: flex;
+	gap: 10px;
+}
+
+.nav a {
+	text-decoration: none;
+	color: #1f2937;
+	padding: 8px 10px;
+	border-radius: 10px;
+	border: 1px solid transparent;
+}
+
+.nav a.active {
+	border-color: #e2e8f0;
+	background: #f8fafc;
+}
+
+.content {
+	display: block;
+}
