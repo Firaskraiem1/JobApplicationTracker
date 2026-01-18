@@ -5,7 +5,7 @@
 I built a small Angular job application tracker with two main screens: an Applications page to create/edit/delete applications, and a Calendar page to visualize key dates (applied / interview / deadline). Data is stored locally (localStorage) so the app keeps state across refreshes.
 
 Main things I implemented:
-- Basic app shell (top navigation) with Angular routing between Applications and Calendar.
+- Basic app (top navigation) with Angular routing between Applications and Calendar.
 - A reactive data layer (service) that exposes an observable list of applications and persists updates to localStorage.
 - CRUD flow: list all applications, add a new one, edit an existing one, delete with confirmation.
 - Calendar grid (month view) that shows events per day and highlights upcoming interviews/deadlines.
