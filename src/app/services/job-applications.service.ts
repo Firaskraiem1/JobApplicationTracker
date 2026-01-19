@@ -56,14 +56,13 @@ function normalizeStoredApplication(raw: unknown): JobApplication | null {
 
   if (!id || !company || !position) return null;
 
-  // Support both camelCase (frontend) and snake_case (DRF) keys
-  const appliedDate = asOptionalYmd(obj['appliedDate'] ?? obj['applied_date']);
-  const interviewDate = asOptionalYmd(obj['interviewDate'] ?? obj['interview_date']);
-  const deadlineDate = asOptionalYmd(obj['deadlineDate'] ?? obj['deadline_date']);
+  const appliedDate = asOptionalYmd(obj['appliedDate'] );
+  const interviewDate = asOptionalYmd(obj['interviewDate'] );
+  const deadlineDate = asOptionalYmd(obj['deadlineDate'] );
   const notes = asOptionalString(obj['notes']);
 
-  const createdAt = asOptionalString(obj['createdAt'] ?? obj['created_at']) ?? nowIso();
-  const updatedAt = asOptionalString(obj['updatedAt'] ?? obj['updated_at']) ?? createdAt;
+  const createdAt = asOptionalString(obj['createdAt'] ) ?? nowIso();
+  const updatedAt = asOptionalString(obj['updatedAt'] ) ?? createdAt;
 
   return {
     id,
@@ -136,27 +135,17 @@ export class JobApplicationsService {
 
   private set(next: JobApplication[]): void {
     this.applicationsSubject.next(next);
-    try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    } catch {
-      // If storage is unavailable (privacy mode, disabled storage), keep in-memory state.
-    }
   }
 
   private load(): JobApplication[] {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw === null) {
-      try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
-      } catch {
-        // ignore
-      }
       return [];
     }
 
     const parsed = safeJsonParse<unknown>(raw);
-
-    // Accept both an array and a DRF-like paginated object { results: [] }
     const items: unknown[] = Array.isArray(parsed)
       ? parsed
       : parsed && typeof parsed === 'object' && Array.isArray((parsed as any).results)

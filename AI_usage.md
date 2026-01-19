@@ -3,7 +3,7 @@
 ## AI Parts (Percentage)
 
 - Project scaffolding & file structure: 20%
-- Angular code (components/services): 60%
+- Angular code (components/services): 50%
 - Debugging / TypeScript strictness fixes: 15%
 
 ## AI Contributions

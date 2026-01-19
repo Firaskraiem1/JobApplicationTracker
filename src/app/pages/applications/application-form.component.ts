@@ -1,6 +1,13 @@
 import { NgFor, NgIf } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators
+} from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   JobApplication,
@@ -29,6 +36,7 @@ export class ApplicationFormComponent {
   readonly isEdit = computed(() => this.id() !== null);
   readonly loading = signal(true);
   readonly notFound = signal(false);
+  readonly showSuccessNotification = signal(false);
 
   readonly form = this.fb.nonNullable.group({
     company: ['', [Validators.required, Validators.minLength(2)]],
@@ -55,6 +63,9 @@ export class ApplicationFormComponent {
       this.applyExisting(existing);
     }
 
+    this.form.addValidators(this.duplicateCompanyPositionValidator());
+    this.form.updateValueAndValidity({ emitEvent: false });
+
     this.loading.set(false);
   }
 
@@ -64,9 +75,12 @@ export class ApplicationFormComponent {
       return;
     }
 
+    const company = this.form.controls.company.value.trim();
+    const position = this.form.controls.position.value.trim();
+
     const payload: JobApplicationCreate = {
-      company: this.form.controls.company.value.trim(),
-      position: this.form.controls.position.value.trim(),
+      company,
+      position,
       status: this.form.controls.status.value,
       appliedDate: this.form.controls.appliedDate.value || undefined,
       interviewDate: this.form.controls.interviewDate.value || undefined,
@@ -81,7 +95,10 @@ export class ApplicationFormComponent {
       this.jobApplicationsService.create(payload);
     }
 
-    void this.router.navigateByUrl('/applications');
+    this.showSuccessNotification.set(true);
+    setTimeout(() => {
+      void this.router.navigateByUrl('/applications');
+    }, 600);
   }
 
   private applyExisting(existing: JobApplication): void {
@@ -94,5 +111,33 @@ export class ApplicationFormComponent {
       deadlineDate: existing.deadlineDate ?? '',
       notes: existing.notes ?? ''
     });
+  }
+
+  private duplicateCompanyPositionValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const group = control as any;
+      const companyRaw = group?.controls?.company?.value;
+      const positionRaw = group?.controls?.position?.value;
+
+      const company = typeof companyRaw === 'string' ? companyRaw.trim() : '';
+      const position = typeof positionRaw === 'string' ? positionRaw.trim() : '';
+
+      if (!company || !position) return null;
+
+      const companyKey = company.toLowerCase();
+      const positionKey = position.toLowerCase();
+      const id = this.id();
+
+      const duplicateExists = this.jobApplicationsService
+        .getSnapshot()
+        .some(
+          (app) =>
+            app.id !== id &&
+            app.company.trim().toLowerCase() === companyKey &&
+            app.position.trim().toLowerCase() === positionKey
+        );
+
+      return duplicateExists ? { duplicateCompanyPosition: true } : null;
+    };
   }
 }
