@@ -92,7 +92,6 @@ export class CalendarComponent {
 
   jumpToDate(value: string): void {
     if (!value) return;
-    // Expect YYYY-MM-DD from <input type="date">
     const parsed = new Date(`${value}T00:00:00`);
     if (Number.isNaN(parsed.getTime())) return;
 
