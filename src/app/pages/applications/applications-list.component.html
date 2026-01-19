@@ -51,9 +51,43 @@
 
         <footer class="actions">
           <a class="secondary" [routerLink]="['/applications', app.id, 'edit']">Edit</a>
-          <button class="danger" type="button" (click)="delete(app.id)">Delete</button>
+          <button class="danger" type="button" (click)="openDeleteModal(app)">Delete</button>
         </footer>
       </article>
     </div>
   </ng-container>
+
+
+  <div class="modal-overlay" *ngIf="deleteModal().show" (click)="cancelDelete()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Delete Job Application</h2>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete the application for <strong>{{ deleteModal().app?.position }}</strong> at <strong>{{ deleteModal().app?.company }}</strong>?</p>
+        <p class="warning">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" type="button" (click)="cancelDelete()">Cancel</button>
+        <button class="btn-delete" type="button" (click)="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Undo Delete Notification -->
+  <div class="undo-notification" *ngIf="undoNotification().show">
+    <div class="undo-content">
+      <div class="undo-text">
+        <svg class="icon-trash" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        </svg>
+        <span><strong>{{ undoNotification().app?.position }}</strong> deleted</span>
+      </div>
+      <div class="undo-actions">
+        <span class="countdown">{{ undoNotification().countdown }}s</span>
+        <button class="btn-undo" type="button" (click)="undoDelete()">Undo</button>
+      </div>
+    </div>
+  </div>
 </section>
