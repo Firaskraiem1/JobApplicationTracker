@@ -12,49 +12,114 @@
   <p class="empty" *ngIf="notFound()">Application not found.</p>
 
   <form class="form" *ngIf="!notFound()" [formGroup]="form" (ngSubmit)="save()">
-    <label>
-      <span>Company *</span>
-      <input type="text" [formControl]="form.controls.company" />
-      <small *ngIf="form.controls.company.touched && form.controls.company.invalid">Required</small>
-    </label>
-
-    <label>
-      <span>Position *</span>
-      <input type="text" [formControl]="form.controls.position" />
-      <small *ngIf="form.controls.position.touched && form.controls.position.invalid">Required</small>
-    </label>
-
-    <label>
-      <span>Status *</span>
-      <select [formControl]="form.controls.status">
-        <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
-      </select>
-    </label>
-
-    <div class="grid">
+    <div class="form-section">
+      <h3 class="section-title">Basic Information</h3>
+      
       <label>
-        <span>Applied date</span>
-        <input type="date" [formControl]="form.controls.appliedDate" />
+        <span>Company *</span>
+        <input 
+          type="text" 
+          [formControl]="form.controls.company" 
+          placeholder="Enter company name"
+        />
+        <small *ngIf="form.controls.company.touched && form.controls.company.errors?.['required']">
+          Required
+        </small>
+        <small *ngIf="form.controls.company.touched && form.controls.company.errors?.['minlength']">
+          Minimum 2 characters
+        </small>
       </label>
 
       <label>
-        <span>Interview date</span>
-        <input type="date" [formControl]="form.controls.interviewDate" />
+        <span>Position *</span>
+        <input 
+          type="text" 
+          [formControl]="form.controls.position" 
+          placeholder="Enter job position"
+        />
+        <small *ngIf="form.controls.position.touched && form.controls.position.errors?.['required']">
+          Required
+        </small>
+        <small *ngIf="form.controls.position.touched && form.controls.position.errors?.['minlength']">
+          Minimum 2 characters
+        </small>
+        <small
+          *ngIf="
+            (form.controls.company.touched || form.controls.position.touched) &&
+            form.errors?.['duplicateCompanyPosition']
+          "
+        >
+          This company already has an application for the same position.
+        </small>
       </label>
 
       <label>
-        <span>Deadline date</span>
-        <input type="date" [formControl]="form.controls.deadlineDate" />
+        <span>Status *</span>
+        <select [formControl]="form.controls.status">
+          <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+        </select>
       </label>
     </div>
 
-    <label>
-      <span>Notes</span>
-      <textarea rows="4" [formControl]="form.controls.notes"></textarea>
-    </label>
+    <div class="form-section">
+      <h3 class="section-title">Important Dates</h3>
+      
+      <div class="grid">
+        <label>
+          <span>Applied date</span>
+          <div class="date-field">
+            <input class="date" type="date" [formControl]="form.controls.appliedDate" />
+          </div>
+        </label>
 
-    <footer class="actions">
-      <button class="primary" type="submit">Save</button>
+        <label>
+          <span>Interview date</span>
+          <div class="date-field">
+            <input class="date" type="date" [formControl]="form.controls.interviewDate" />
+          </div>
+        </label>
+
+        <label>
+          <span>Deadline date</span>
+          <div class="date-field">
+            <input class="date" type="date" [formControl]="form.controls.deadlineDate" />
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3 class="section-title">Additional Information</h3>
+      
+      <label>
+        <span>Notes</span>
+        <textarea 
+          rows="4" 
+          [formControl]="form.controls.notes"
+          placeholder="Add any additional notes or comments..."
+        ></textarea>
+      </label>
+    </div>
+
+    <footer class="form-footer">
+      <div class="actions">
+        <a class="btn-cancel" routerLink="/applications">Cancel</a>
+        <button class="primary" type="submit">Save Application</button>
+      </div>
     </footer>
   </form>
+
+  <!-- Success Notification -->
+  <div class="notification" *ngIf="showSuccessNotification()">
+    <div class="notification-content">
+      <svg class="icon-success" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M9 12l2 2 4-4"></path>
+      </svg>
+      <div class="notification-text">
+        <strong>Success!</strong>
+        <span>Application {{ isEdit() ? 'updated' : 'added' }} successfully</span>
+      </div>
+    </div>
+  </div>
 </section>
